@@ -227,7 +227,6 @@ class Household(models.Model):
         return res
 
     def major_revision(self, vals):
-        # TODO household not updated
         revised_data = []
         household_mapping = HouseHoldMapping(self.env)
         household_data = household_mapping.get_vals_from_connect(
@@ -259,8 +258,14 @@ class Household(models.Model):
                 child._major_revision({
                     'revised_value_ids': [(6, _, revised_data_ids)]
                 })
+        # because member_ids is a list and is immutable we have to make it a
+        # tuple before the write
+        household_data['member_ids'] = tuple(household_data['member_ids'])
 
+        # TODO household_obj is updated in database but only for a short time
+        # one of them should be enough
         household_obj.write(household_data)
+        self.write(household_data)
         return household_obj.ids
 
 
