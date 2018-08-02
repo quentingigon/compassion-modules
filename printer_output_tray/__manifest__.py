@@ -9,8 +9,8 @@
 #                        /_/
 #                            in Jesus' name
 #
-#    Copyright (C) 2016 Compassion CH (http://www.compassion.ch)
-#    @author: Emanuel Cino <ecino@compassion.ch>
+#    Copyright (C) 2018 Compassion CH (http://www.compassion.ch)
+#    @author: Nicolas Bornand
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -29,32 +29,22 @@
 
 # pylint: disable=C8101
 {
-    'name': 'Partner Communication',
-    'version': '10.0.1.0.1',
-    'category': 'Other',
+    'name': 'Report to printer - Paper bin selection',
+    'version': '10.0.1.0.0',
+    'category': 'Printer',
     'author': 'Compassion CH',
-    'license': 'AGPL-3',
     'website': 'http://www.compassion.ch',
-    'depends': ['crm_phone', 'base_report_to_printer', 'hr', 'contacts',
-                'compassion_dashboard', 'queue_job', 'utm', 'web_ckeditor4'],
-    'external_dependencies': {
-        'python': ['phonenumbers']
-    },
-    'data': [
-        'security/ir.model.access.csv',
-        'views/partner_communication.xml',
-        'views/communication_job_view.xml',
-        'views/communication_config_view.xml',
-        'views/call_wizard_view.xml',
-        'views/res_partner_view.xml',
-        'views/change_text_wizard_view.xml',
-        'views/pdf_wizard_view.xml',
-        'views/generate_communication_wizard_view.xml',
-        'views/communication_dashboard.xml',
-        'data/default_communication.xml'
+    'license': 'AGPL-3',
+    'depends': [
+        'base_report_to_printer'
     ],
-    'qweb': ["static/src/xml/communication_dashboard.xml"],
-    'demo': ["demo/demo_data.xml"],
+    'data': [
+        'views/printing_printer.xml',
+        'security/ir.model.access.csv'
+    ],
+    'external_dependencies': {
+        'python': ['cups'],
+    },
     'installable': True,
-    'auto_install': False
+    'application': False,
 }
