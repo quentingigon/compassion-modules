@@ -264,8 +264,8 @@ class Household(models.Model):
 
         # TODO household_obj is updated in database but only for a short time
         # one of them should be enough
-        household_obj.write(household_data)
-        self.write(household_data)
+        # household_obj.sudo().write(household_data)
+        self.sudo().write(household_data)
         return household_obj.ids
 
 

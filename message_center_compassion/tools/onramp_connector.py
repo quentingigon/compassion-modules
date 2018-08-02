@@ -13,6 +13,8 @@ import requests
 import base64
 from datetime import datetime, timedelta
 
+from simplejson import JSONDecodeError
+
 from .onramp_logging import log_message
 
 from odoo import _
@@ -166,6 +168,6 @@ class OnrampConnector(object):
             self._session.headers.update({
                 'Authorization': '{token_type} {access_token}'.format(
                     **self._token)})
-        except (AttributeError, KeyError):
+        except (AttributeError, KeyError, JSONDecodeError):
             raise UserError(
                 _('Token validation failed.'))
