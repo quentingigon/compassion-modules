@@ -262,10 +262,9 @@ class Household(models.Model):
         # tuple before the write
         household_data['member_ids'] = tuple(household_data['member_ids'])
 
-        # TODO household_obj is updated in database but only for a short time
-        # one of them should be enough
-        # household_obj.sudo().write(household_data)
-        self.sudo().write(household_data)
+        # TODO household_obj is updated in database but only for a short time.
+        # look in main in module queue, line 65 (http.request.env.cr.commit())
+        household_obj.sudo().write(household_data)
         return household_obj.ids
 
 
