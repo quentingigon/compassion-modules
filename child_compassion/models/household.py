@@ -255,7 +255,7 @@ class Household(models.Model):
 
         if revised_data_ids:
             for child in household_obj.child_ids:
-                child._major_revision({
+                child.sudo()._major_revision({
                     'revised_value_ids': [(6, _, revised_data_ids)]
                 })
         # because member_ids is a list and is immutable we have to make it a

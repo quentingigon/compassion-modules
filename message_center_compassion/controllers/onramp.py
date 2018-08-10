@@ -75,7 +75,7 @@ class RestController(http.Controller):
             'X-Cim-Fromaddress')
         if from_address not in AUTHORIZED_SENDERS:
             raise exceptions.AccessDenied()
-        company_obj = request.env['res.company'].sudo(request.uid)
+        company_obj = request.env['res.company'].sudo()
         companies = company_obj.search([])
         country_codes = companies.mapped('partner_id.country_id.code')
         to_address = headers.get('x-cim-ToAddress') or headers.get(
