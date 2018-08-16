@@ -226,6 +226,7 @@ class Household(models.Model):
             res = super(Household, self).create(vals)
         return res
 
+    @api.model
     def major_revision(self, vals):
         revised_data = []
         household_mapping = HouseHoldMapping(self.env)

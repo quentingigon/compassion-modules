@@ -6,14 +6,13 @@ export default class extends React.Component {
     render() {
         let styles = {
             loadingContainer: {
-                display: 'table-cell',
-                verticalAlign: 'middle',
-                height: '80vh',
+                marginTop: '120px',
             },
             loadingTextContainer: {
-                width: '98vw',
+                width: '80%',
+                margin: 'auto',
                 textAlign: 'center',
-                paddingTop: 10
+                paddingTop: 10,
             },
             circularProgressContainer: {
                 marginLeft: '50%',

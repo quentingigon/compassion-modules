@@ -60,13 +60,17 @@ class SmsChildRequest(models.Model):
         ('Female', 'Female')
     ])
     min_age = fields.Integer(size=2)
-    max_age = fields.Integer(size=2)
+    # Don't propose children older than 12 years by default
+    max_age = fields.Integer(size=2, default=12)
     field_office_id = fields.Many2one(
         'compassion.field.office', 'Field Office')
 
     new_partner = fields.Boolean('New partner ?',
                                  help="is true if partner was created when "
                                  "sending sms", default=False)
+    is_trying_to_fetch_child = fields.Boolean(
+        help="This is set to true when a child is currently being fetched. "
+             "It prevents to fetch multiple children.")
 
     @api.multi
     def _compute_full_url(self):
@@ -95,10 +99,8 @@ class SmsChildRequest(models.Model):
             # Try to find a matching partner given phone number
             phone = vals.get('sender')
             partner_obj = self.env['res.partner']
-            partner = partner_obj.search([
-                '|', ('mobile', 'like', phone),
-                ('phone', 'like', phone)
-            ])
+            partner = partner_obj.search([('mobile', 'like', phone)]) or \
+                partner_obj.search([('phone', 'like', phone)])
             if partner and len(partner) == 1:
                 vals['partner_id'] = partner.id
         request = super(SmsChildRequest, self).create(vals)
@@ -109,7 +111,8 @@ class SmsChildRequest(models.Model):
             'step1_url_id': self.env['link.tracker'].sudo().create({
                 'url': base_url + lang + '/sms_sponsorship/step1/' +
                 str(request.id),
-            }).id
+            }).id,
+            'is_trying_to_fetch_child': True
         })
         # Directly commit for the job to work
         self.env.cr.commit()    # pylint: disable=invalid-commit
@@ -128,7 +131,8 @@ class SmsChildRequest(models.Model):
         self.hold_id.write({'sms_request_id': False})
         self.write({
             'state': 'new',
-            'child_id': False
+            'child_id': False,
+            'is_trying_to_fetch_child': True
         })
         return self.reserve_child()
 
@@ -178,6 +182,7 @@ class SmsChildRequest(models.Model):
         child_hold = self.env['compassion.hold'].browse(
             result_action['domain'][0][2])
         child_hold.sms_request_id = self.id
+        self.is_trying_to_fetch_child = False
         if child_hold.state == 'active':
             self.write({
                 'child_id': child_hold.child_id.id,
