@@ -259,9 +259,6 @@ class Household(models.Model):
                 child.sudo()._major_revision({
                     'revised_value_ids': [(6, _, revised_data_ids)]
                 })
-        # because member_ids is a list and is immutable we have to make it a
-        # tuple before the write
-        household_data['member_ids'] = tuple(household_data['member_ids'])
 
         # TODO household_obj is updated in database but only for a short time.
         # look in main in module queue, line 65 (http.request.env.cr.commit())
