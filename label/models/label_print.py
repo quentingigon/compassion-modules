@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 #
 #    Copyright (C) 2015 Compassion CH (http://www.compassion.ch)
@@ -11,7 +10,7 @@
 
 from odoo import models, fields, api, _
 from odoo.tools import safe_eval
-
+import json
 
 class LabelPrint(models.Model):
     _name = "label.print"
@@ -25,8 +24,8 @@ class LabelPrint(models.Model):
         'ir.actions.act_window', 'Sidebar action', readonly=True,
         help="Sidebar action to make this template available on records "
         "of the related document model")
-    ref_ir_value = fields.Many2one(
-        'ir.values', 'Sidebar button', readonly=True,
+    ref_ir_default = fields.Many2one(
+        'ir.default', 'Sidebar button', readonly=True,
         help="Sidebar button to open the sidebar action")
     model_list = fields.Char('Model List', size=256)
     padding_top = fields.Float("Padding Top (in mm)", default=1.0)
@@ -66,6 +65,9 @@ class LabelPrint(models.Model):
                     if model_ids:
                         model_list.append(key)
         self.model_list = model_list
+        # TODO: this avoid crashing the app but may not be correct
+        if len(model_list) == 1:
+            model_list = None
         return model_list
 
     @api.multi
@@ -74,7 +76,7 @@ class LabelPrint(models.Model):
         action_obj = self.env['ir.actions.act_window']
         for data in self.browse(self.ids):
             src_obj = data.model_id.model
-            button_name = _('Label (%s)') % data.name
+            button_name = _(f'Label ({data.name})')
 
             vals['ref_ir_act_report'] = action_obj.create({
                 'name': button_name,
@@ -82,33 +84,26 @@ class LabelPrint(models.Model):
                 'res_model': 'label.print.wizard',
                 'src_model': src_obj,
                 'view_type': 'form',
-                'context': "{'label_print' : %d}" % (data.id),
+                'context': f"{{'label_print' : {data.id}}}",
                 'view_mode': 'form,tree',
                 'target': 'new',
+                'binding_model_id': self.env.ref("base.model_res_partner").id,
+                'binding_type': 'report'
             })
 
-            id_temp = vals['ref_ir_act_report'].id
-            vals['ref_ir_value'] = self.env['ir.values'].create({
-                'name': button_name,
-                'model': src_obj,
-                'key2': 'client_action_multi',
-                'value': "ir.actions.act_window," + str(id_temp),
-                'object': True,
-            })
         self.write({
-            'ref_ir_act_report': vals.get('ref_ir_act_report', False).id,
-            'ref_ir_value': vals.get('ref_ir_value', False).id,
+            'ref_ir_act_report': vals.get('ref_ir_act_report', False).id
         })
         return True
 
     @api.multi
     def unlink(self):
         self.unlink_action()
-        super(models.Model, self).unlink()
+        super().unlink()
 
     @api.multi
     def unlink_action(self):
-        ir_values_obj = self.env['ir.values']
+        ir_values_obj = self.env['ir.default']
         act_window_obj = self.env['ir.actions.act_window']
 
         for template in self:
@@ -116,25 +111,11 @@ class LabelPrint(models.Model):
                     act_window_obj_search = act_window_obj.browse(
                         template.ref_ir_act_report.id)
                     act_window_obj_search.unlink()
-                if template.ref_ir_value.id:
+                if template.ref_ir_default.id:
                     ir_values_obj_search = ir_values_obj.browse(
-                        template.ref_ir_value.id)
+                        template.ref_ir_default.id)
                     ir_values_obj_search.unlink()
         return True
-
-
-class LabelPrintField(models.Model):
-    _name = "label.print.field"
-    _description = 'Label Print Field'
-
-    field_id = fields.Many2one('ir.model.fields', 'Fields', required=False)
-    report_id = fields.Many2one('label.print', 'Report')
-    type = fields.Selection([('normal', 'Normal'), ('barcode', 'Barcode')],
-                            'Type', required=True,
-                            default='normal')
-    python_expression = fields.Boolean('Python Expression')
-    python_field = fields.Text('Fields')
-    fontsize = fields.Float("Font Size", default=12)
 
 
 class IrModelFields(models.Model):
@@ -146,6 +127,6 @@ class IrModelFields(models.Model):
         data = self.env.context.get('model_list')
         if data:
             args.append(('model', 'in', safe_eval(data)))
-        ret_vat = super(IrModelFields, self).name_search(
+        ret_vat = super().name_search(
             name=name, args=args, operator=operator, limit=limit)
         return ret_vat

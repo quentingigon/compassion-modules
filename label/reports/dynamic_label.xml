@@ -1,7 +1,7 @@
 <odoo>
     <template id="report_label">
         <link rel="stylesheet" href="/label/static/src/css/label.css"/>
-        <t t-call="report.html_container">
+        <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
                 <div class="page">
                     <t t-foreach="range(len(label_data))" t-as="data_page">

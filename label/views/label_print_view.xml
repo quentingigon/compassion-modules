@@ -54,7 +54,7 @@
                                     colspan="2" attrs="{'invisible':[('ref_ir_act_report','!=',False)]}"
                                     help="Display a button in the sidebar of related documents to open a composition wizard"/>
                             <field name="ref_ir_act_report" attrs="{'invisible':[('ref_ir_act_report','=',False)]}"/>
-                            <field name="ref_ir_value" attrs="{'invisible':[('ref_ir_act_report','=',False)]}"/>
+                            <field name="ref_ir_default" attrs="{'invisible':[('ref_ir_act_report','=',False)]}"/>
                             <button name="unlink_action" string="Remove sidebar button" type="object" icon="fa-trash"
                                     attrs="{'invisible':[('ref_ir_act_report','=',False)]}" colspan="2" />
                         </group>
@@ -86,6 +86,6 @@
 
     <menuitem id="menu_label_print_view"
               action="action_label_print_form"
-              parent="report.reporting_menuitem"/>
+              parent="base.reporting_menuitem"/>
 
 </odoo>

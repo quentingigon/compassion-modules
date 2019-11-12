@@ -18,7 +18,7 @@
 
     <report id="dynamic_label" string="Qweb Label" model="label.report_label" name="label.report_label" report_type="qweb-pdf"/>
 
-    <record id="dynamic_label" model="ir.actions.report.xml">
+    <record id="dynamic_label" model="ir.actions.report">
       <field name="paperformat_id" ref="label.paperformat_label"/>
     </record>
 </odoo>
