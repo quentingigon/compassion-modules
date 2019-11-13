@@ -13,8 +13,6 @@ from odoo.tools.safe_eval import safe_eval
 from copy import deepcopy
 from math import ceil
 
-ONE_INCH = 25.4
-
 
 class ReportDynamicLabel(models.TransientModel):
     _name = 'report.label.report_label'
@@ -81,7 +79,7 @@ class ReportDynamicLabel(models.TransientModel):
                     first = True
 
                 # style is for CSS in HTML
-                vals_dict = {'value':  value,
+                vals_dict = {'value': value,
                              'type': field.type,
                              'style': "font-size:" +
                              str(field.fontsize)+"px;"}
@@ -104,24 +102,17 @@ class ReportDynamicLabel(models.TransientModel):
     def get_report_values(self, docids, data=None):
         if docids is None:
             docids = data['doc_ids']
-        label_print_records = self.env['label.print'].browse(docids)
-        # data.update({
-        #     'label_data': self.get_data(
-        #         data['rows'], data['columns'],
-        #         self.env[data['active_model']].browse(data['active_ids']),
-        #         data['number_labels'])
-        # })
-        # model = self.env.context.get('active_model')
-        # docs = self.env[model].browse(self.env.context.get('active_ids', []))
-        # return self.env['ir.actions.report'].render_qweb_pdf('label.report_label', data)
-        return {
+        label_print_records = self.env['label.print.wizard'].browse(docids)
+        if data is None:
+            data = {}
+        data.update({
             'doc_ids': docids,
-            'doc_model': self.env["label.print"],
-            'dos': label_print_records,
-            'data': data,
+            'doc_model': "label.print.wizard",
+            'docs': label_print_records,
             'env': self.env,
             'label_data': self.get_data(
                 data['rows'], data['columns'],
                 self.env[self.env.context.get('active_model')].browse(data['active_ids']),
                 data['number_labels'])
-        }
+        })
+        return data
