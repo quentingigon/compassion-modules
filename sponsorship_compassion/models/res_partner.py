@@ -9,6 +9,7 @@
 ##############################################################################
 import random
 import string
+import functools
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
@@ -23,7 +24,7 @@ class ResPartner(models.Model):
     ##########################################################################
     #                                 FIELDS                                 #
     ##########################################################################
-    global_id = fields.Char(copy=False)
+    global_id = fields.Char(copy=False, readonly=True)
     contracts_fully_managed = fields.One2many(
         "recurring.contract", compute='_compute_related_contracts',
         string='Fully managed sponsorships',
@@ -181,6 +182,8 @@ class ResPartner(models.Model):
     ##########################################################################
     @api.model
     def create(self, vals):
+        # Use a sequence for references
+        vals['ref'] = self.env['ir.sequence'].get('partner.ref')
         # Put a preferred name
         partner = super().create(vals)
         if not partner.preferred_name:
@@ -195,8 +198,8 @@ class ResPartner(models.Model):
         res = super().write(vals)
         notify_vals = ['firstname', 'lastname', 'name', 'preferred_name',
                        'mandatory_review', 'send_original', 'title']
-        notify = reduce(lambda prev, val: prev or val in vals, notify_vals,
-                        False)
+        notify = functools.reduce(
+            lambda prev, val: prev or val in vals, notify_vals, False)
         if notify and not self.env.context.get('no_upsert'):
             self.upsert_constituent()
 
@@ -332,7 +335,7 @@ class ResPartner(models.Model):
 
         def _random_str():
             return ''.join([
-                random.choice(string.ascii_letters) for n in xrange(8)])
+                random.choice(string.ascii_letters) for n in range(8)])
 
         # Anonymize and delete partner data
         self.with_context(no_upsert=True).write({
@@ -381,6 +384,8 @@ class ResPartner(models.Model):
         messages = message_obj
         action_id = self.env.ref('sponsorship_compassion.upsert_partner').id
         for partner in self:
+            if not partner.ref:
+                partner.ref = self.env['ir.sequence'].get('partner.ref')
             contract_count = self.env['recurring.contract'].search_count([
                 ('correspondent_id', '=', partner.id),
                 ('state', 'not in', ('terminated', 'cancelled'))])

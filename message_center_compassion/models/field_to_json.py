@@ -63,6 +63,11 @@ class FieldToJson(models.Model):
         help='Pyhton function that will convert the JSON value to its  '
              'correct value in Odoo. Use `json_value` as the value to be '
              'processed. You should return the final Odoo value.')
+    exclude_from_json = fields.Boolean(
+        help="Value won't be converted to JSON if checked (data_to_json)."
+             "The JSON value can still be converted into Odoo value "
+             "(json_to_data)."
+    )
 
     _sql_constraints = [
         ('unique', 'unique(mapping_id,json_name)',
@@ -161,6 +166,12 @@ class FieldToJson(models.Model):
             orm_vals.extend([(0, 0, vals) for vals in record_vals
                              if isinstance(vals, dict)])
             return orm_vals
+
+        if not self.search_relational_record and not \
+                self.allow_relational_creation:
+            # In that case we don't want to search or create, we simply
+            # return the raw value
+            return value
 
         # No records found given the values, we raise the error
         # to let user verify integrity of the data.

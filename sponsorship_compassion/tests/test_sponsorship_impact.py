@@ -79,8 +79,5 @@ class TestSponsorshipImpact(BaseSponsorshipTest):
         self.assertEqual(sponsorship_ids[0].state, 'active')
         self.assertEqual(partner.sr_sponsorship, 3)
 
-        # Check duration : 8*7-2 = 52 days per sponsorship
-        # self.assertEqual(partner.sr_time_fcp, 53 * 3)
-
         self.assertEqual(partner.sr_nb_girl, 1)
         self.assertEqual(partner.sr_nb_boy, 2)

@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    Copyright (C) 2016 Compassion CH (http://www.compassion.ch)
-#    Releasing children from poverty in Jesus' name
+#    Releasing children from poverty in Jesus' namenoupdate="1"
 #    @author: Emanuel Cino <ecino@compassion.ch>
 #
 #    The licence is in the file __manifest__.py
@@ -122,21 +122,6 @@ class ResPartner(models.Model):
                 partner.date_communication = city + u", " + date
 
 
-class ResPartnerTitle(models.Model):
-    """
-    Adds salutation and gender fields.
-    """
-    _inherit = 'res.partner.title'
-    _order = 'order_index ASC, name ASC'
-
-    gender = fields.Selection([
-        ('M', 'Male'),
-        ('F', 'Female'),
-    ])
-    plural = fields.Boolean()
-    order_index = fields.Integer()
-
-
 class ResUsers(models.Model):
     _inherit = 'res.users'
 
@@ -145,11 +130,11 @@ class ResUsers(models.Model):
     @api.multi
     def _compute_signature_letter(self):
         for user in self:
-            employee = user.employee_ids
+            employee = user.employee_ids.sudo()
             signature = ''
             if len(employee) == 1:
                 signature = employee.name + '<br/>'
                 if employee.department_id:
                     signature += employee.department_id.name + '<br/>'
-            signature += user.company_id.name
+            signature += user.sudo().company_id.name
             user.signature_letter = signature

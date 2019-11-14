@@ -1,7 +1,6 @@
-# coding: utf-8
 ##############################################################################
 #
-#    Copyright (C) 2018 Compassion CH (http://www.compassion.ch)
+#    Copyright (C) 2019 Compassion CH (http://www.compassion.ch)
 #    @author: Emanuel Cino <ecino@compassion.ch>
 #
 #    The licence is in the file __manifest__.py
@@ -77,7 +76,9 @@ class PaymentTransaction(models.Model):
     def _get_payment_journal_id(self):
         # Can be overridden
         return self.env['account.journal'].search([
-            ('name', '=', 'Web')]).id
+            ('name', '=', 'Web'),
+            ('company_id', '=', self.invoice_id.company_id.id)
+        ]).id
 
     def _get_payment_method_id(self):
         # Can be overridden

@@ -30,7 +30,7 @@
 # pylint: disable=C8101
 {
     'name': 'Compassion CH - Events',
-    'version': '10.0.1.4.0',
+    'version': '10.0.1.5.0',
     'category': 'CRM',
     'sequence': 150,
     'author': 'Compassion CH',
@@ -43,6 +43,7 @@
         'project',
         'crm_request',
         'mail_tracking',
+        'web_kanban',
     ],
     'data': [
         'security/ir.model.access.csv',
@@ -65,9 +66,10 @@
         'views/calendar_view.xml',
         'views/mail_message_view.xml',
         'views/partner_log_interaction_wizard_view.xml',
+        'views/web_kanban_colorpicker_template.xml',
     ],
     'qweb': [
-        'static/src/xml/web_fullcalendar_event.xml',
+        'static/src/xml/web_kanban_colorpicker.xml',
     ],
     'demo': [],
     'installable': False,

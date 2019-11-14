@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 #
 #    Copyright (C) 2019 Compassion CH (http://www.compassion.ch)
@@ -10,3 +9,5 @@
 ##############################################################################
 
 from . import firebase_registration
+from . import firebase_notification
+from . import res_partner

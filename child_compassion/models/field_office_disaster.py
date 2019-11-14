@@ -96,9 +96,9 @@ class ChildDisasterImpact(models.Model):
         impact = super().create(vals)
         if impact.child_id:
             impact.child_id.message_post(
-                _(f"Child was affected by the natural disaster "
-                  f"{impact.disaster_id.name}"),
-                _("Disaster Alert")
+                body=_(f"Child was affected by the natural disaster "
+                       f"{impact.disaster_id.name}"),
+                subject=_("Disaster Alert")
             )
         return impact
 
@@ -227,7 +227,7 @@ class FieldOfficeDisasterAlert(models.Model):
         disaster_id = vals.get('disaster_id')
         disaster = self.search([('disaster_id', '=', disaster_id)])
         # Notify users
-        notify_ids = self.env['staff.notification.settings'].get_param(
+        notify_ids = self.env['res.config.settings'].get_param(
             'disaster_notify_ids')
         if disaster:
             disaster.write(vals)
