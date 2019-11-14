@@ -15,13 +15,13 @@ from odoo.addons.child_compassion.models.compassion_hold import \
 
 
 class EndContractWizard(models.TransientModel):
-    _name = 'end.contract.wizard'
+    _inherit = 'end.contract.wizard'
 
-    contract_id = fields.Many2one(
-        'recurring.contract', 'Contract',
-        default=lambda self: self.env.context.get('active_id'))
-    end_reason = fields.Selection(
-        related='contract_id.end_reason', required=True)
+    # contract_id = fields.Many2one(
+    #     'recurring.contract', 'Contract',
+    #     default=lambda self: self.env.context.get('active_id'))
+    # end_reason = fields.Selection(
+    #     related='contract_id.end_reason', required=True)
     keep_child_on_hold = fields.Boolean()
     hold_expiration_date = fields.Datetime(
         default=lambda s: s.env[

@@ -7,13 +7,6 @@
         <field name="model_id" ref="model_res_partner"/>
         <field name="name">Anonymize Partner Mapping</field>
     </record>
-<<<<<<< HEAD
-    <record id="mapping_base_sponsorship" model="compassion.mapping">
-        <field name="model_id" ref="model_recurring_contract"/>
-        <field name="name">Base Sponsorship Mapping</field>
-    </record>
-=======
->>>>>>> af9ba879856387e24b318af0f7b3b962d4a7e458
     <record id="mapping_create_sponsorship" model="compassion.mapping">
         <field name="model_id" ref="model_recurring_contract"/>
         <field name="name">Create Sponsorship Mapping</field>
@@ -22,8 +15,4 @@
         <field name="model_id" ref="model_recurring_contract"/>
         <field name="name">Cancel Sponsorship Mapping</field>
     </record>
-<<<<<<< HEAD
 </odoo>
-=======
-</odoo>
->>>>>>> af9ba879856387e24b318af0f7b3b962d4a7e458

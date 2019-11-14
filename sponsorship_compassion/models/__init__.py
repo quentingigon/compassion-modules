@@ -19,15 +19,8 @@ from . import child_compassion
 from . import product_names
 from . import account_invoice
 from . import move_line
-<<<<<<< HEAD
-from . import contract_origin
-from . import product
-from . import recurring_contract_line
-from . import utm
-=======
 from . import product_template
 from . import contract_origin
 from . import product
 from . import recurring_contract_line
 from . import res_partner_title
->>>>>>> af9ba879856387e24b318af0f7b3b962d4a7e458

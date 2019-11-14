@@ -1,22 +1,4 @@
 <odoo>
-    <data>
-        <record id="action_end_contract" model="ir.actions.act_window">
-            <field name="name">End contract</field>
-            <field name="res_model">end.contract.wizard</field>
-            <field name="src_model">recurring.contract</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="recurring_contract.end_contract_view"/>
-            <field name="context">{
-                'active_id': active_id,
-                'default_end_date': context_today
-                }
-            </field>
-            <field name="target">new</field>
-        </record>
-    </data>
-
     <record id="end_sponsorship_view" model="ir.ui.view">
         <field name="name">end.sponsorship.wizard.view</field>
         <field name="model">end.contract.wizard</field>
