@@ -24,10 +24,6 @@ class LabelPrint(models.Model):
         'ir.actions.act_window', 'Sidebar action', readonly=True,
         help="Sidebar action to make this template available on records "
         "of the related document model")
-    ref_ir_default = fields.Many2one(
-        'ir.default', 'Sidebar button', readonly=True,
-        help="Sidebar button to open the sidebar action")
-    model_list = fields.Char('Model List', size=256)
     padding_top = fields.Float("Padding Top (in mm)", default=1.0)
     padding_bottom = fields.Float("Padding Bottom  (in mm)", default=1.0)
     padding_left = fields.Float("Padding Left (in mm)", default=1.0)
@@ -49,26 +45,6 @@ class LabelPrint(models.Model):
             for field in label.fields_ids:
                 if field.type == 'barcode':
                     label.is_barcode = True
-
-    @api.onchange('model_id')
-    def onchange_model(self):
-        model_list = []
-        if self.model_id:
-            model_obj = self.env['ir.model']
-            current_model = self.model_id.model
-            model_list.append(current_model)
-
-            active_model_obj = self.env[self.model_id.model]
-            if active_model_obj._inherits:
-                for key, val in active_model_obj._inherits.items():
-                    model_ids = model_obj.search([('model', '=', key)])
-                    if model_ids:
-                        model_list.append(key)
-        self.model_list = model_list
-        # TODO: this avoid crashing the app but may not be correct
-        if len(model_list) == 1:
-            model_list = None
-        return model_list
 
     @api.multi
     def create_action(self):
@@ -116,17 +92,3 @@ class LabelPrint(models.Model):
                         template.ref_ir_default.id)
                     ir_values_obj_search.unlink()
         return True
-
-
-class IrModelFields(models.Model):
-
-    _inherit = 'ir.model.fields'
-
-    @api.model
-    def name_search(self, name='', args=None, operator='ilike', limit=None):
-        data = self.env.context.get('model_list')
-        if data:
-            args.append(('model', 'in', safe_eval(data)))
-        ret_vat = super().name_search(
-            name=name, args=args, operator=operator, limit=limit)
-        return ret_vat
