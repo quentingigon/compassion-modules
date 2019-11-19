@@ -53,9 +53,9 @@
         'views/thankyou_config_view.xml',
         'views/generate_communication_wizard_view.xml',
     ],
-    'demo': [
-        'demo/demo_data.xml'
-    ],
+    # 'demo': [
+    #     'demo/demo_data.xml'
+    # ],
     'installable': True,
     'auto_install': False,
 }
