@@ -15,7 +15,6 @@ class Image
 	function __construct($filename)
 	{
 		$this->filename = $filename;
-		
         $size = getimagesize($filename);
         $this->width = $size[0] / 2.83464;
         $this->height = $size[1] / 2.83464;
@@ -31,6 +30,7 @@ class Image
         // We get the maximal possible width and length of the image
 	    $maxWidth = $maxX - $minX;
 	    $maxHeight = $maxY - $minY;
+
         
         /* We resize images only downward, never upward. If we need to rescale one down,
            we look for the smallest ratio (originalSize / maxSize) to scale the image */

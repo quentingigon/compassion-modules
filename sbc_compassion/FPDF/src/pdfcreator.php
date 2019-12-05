@@ -120,6 +120,7 @@ class PDFCreator
     */
     private function InsertImages($pdf, $template)
     {
+
         $imageBoxes = $template->GetImageBoxes();
         while(!empty($this->images) && $template->HasRemainingImageBox())
         {

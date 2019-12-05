@@ -49,6 +49,9 @@
                     <button name="attach_original" type="object"
                             string="Replace by original"
                             states="Published to Global Partner"/>
+                    <button type="object" name="compose_letter_image_button"
+                            string="Compose letter image"
+                            states="Published to Global Partner"/>
                 </header>
                 <sheet>
                     <h1>

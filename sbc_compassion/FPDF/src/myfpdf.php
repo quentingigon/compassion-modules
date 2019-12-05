@@ -29,7 +29,7 @@ class MyFPDF extends FPDF
 	function MyImage($MinX, $MinY, $MaxX, $MaxY, $filename)
 	{
 	    // 150 DPI
-		parent::Image($filename, $MinX, $MinY, $MaxX - $MinX);
+		parent::Image($filename, $MinX, $MinY, $MaxY - $MinY);
 	}
 
     /**

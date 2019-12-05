@@ -123,8 +123,8 @@ class InstallSdsTracking(models.TransientModel):
                         sub_start_date = fields.Datetime.from_string(
                             sub_contract.start_date)
                         if (sub_contract.end_reason == '1' or
-                            sub_end_date >
-                                sub_start_date + timedelta(days=50)):
+                                (sub_start_date and sub_end_date >
+                                 sub_start_date + timedelta(days=50))):
                             sub_accept_ids.append(
                                 contract.id)
                             break

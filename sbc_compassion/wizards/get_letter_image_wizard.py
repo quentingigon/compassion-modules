@@ -51,14 +51,16 @@ class GetLetterImageWizard(models.TransientModel):
             self.env.context.get('active_id'))
         onramp = SBCConnector()
         image_data = None
+        image_url = None
         if self.image == 'original' and letter.original_letter_url:
-            image_data = onramp.get_letter_image(
-                letter.original_letter_url, self.format,
-                self.page_number, self.dpi)
+            image_url = letter.original_letter_url
         elif self.image == 'final' and letter.final_letter_url:
-            image_data = onramp.get_letter_image(
-                letter.final_letter_url, self.format,
-                self.page_number, self.dpi)
+            image_url = letter.final_letter_url
+
+        image_data = onramp.get_letter_image(
+            image_url, self.format,
+            self.page_number, self.dpi)
+
         if image_data is None:
             raise UserError(
                 _("Image requested was not found remotely."))

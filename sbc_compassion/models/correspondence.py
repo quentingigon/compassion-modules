@@ -13,6 +13,7 @@ import logging
 import re
 import uuid
 import threading
+import os
 
 from odoo import fields, models, api, _
 from odoo.exceptions import UserError
@@ -518,6 +519,10 @@ class Correspondence(models.Model):
         return self.compose_letter_image()
 
     @api.multi
+    def compose_letter_image_button(self):
+        return self.compose_letter_image()
+
+    @api.multi
     def compose_letter_image(self):
         """
         Puts the translated text of a letter inside the original image given
@@ -562,9 +567,9 @@ class Correspondence(models.Model):
         # Extract pages and additional images
         pages = []
         images = []
-        with(Image(blob=image_data)) as page_image:
+        with(Image(blob=image_data, resolution=150)) as page_image:
             for i in page_image.sequence:
-                pages.append(base64.b64encode(Image(i).make_blob('jpg')))
+                pages.append(base64.b64encode(Image(i).make_blob('jpeg')))
                 # For additional pages, check if the page contains text.
                 # If not, it is considered as a picture attachment.
                 if i.index > 1:
@@ -573,6 +578,9 @@ class Correspondence(models.Model):
                         text = getattr(self.page_ids[i.index], source, '')
                     if len(text.strip()) < 5:
                         images.append(pages.pop(i.index - len(images)))
+
+        if '/' not in self.name:
+            self.name = os.path.abspath(self._get_file_name())
 
         self.letter_image = base64.b64encode(template.generate_pdf(
             self.name, {}, {'Translation': text_boxes}, images, pages))
