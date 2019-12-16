@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    Copyright (C) 2018 Compassion CH (http://www.compassion.ch)
+#    Copyright (C) 2019 Compassion CH (http://www.compassion.ch)
 #    Releasing children from poverty in Jesus' name
 #    @author: Emanuel Cino <ecino@compassion.ch>
 #
@@ -17,10 +17,8 @@ def migrate(env, version):
     if not version:
         return
 
-    # Put missing medium on SUB sponsorships
-    direct_medium_id = env.ref('utm.utm_medium_direct').id
-    sponsorships = env['recurring.contract'].search([
-        ('parent_id', '!=', False),
-        ('medium_id', '=', False)
-    ])
-    sponsorships.write({'medium_id': direct_medium_id})
+    # Force computation of donation amounts
+    env['partner.communication.job'].search([
+        ('config_id', 'in', [50, 53]),
+        ('state', 'not in', ['done', 'cancel'])
+    ])._compute_donation_amount()

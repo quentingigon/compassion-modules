@@ -83,7 +83,8 @@ class LabelPrintWizard(models.TransientModel):
     @api.multi
     def print_report(self):
         data = self.get_report_data()
-        return self.env.ref('label.dynamic_label').report_action(self, data=data)
+        return self.env.ref('label.dynamic_label').report_action(
+            self.ids, data=data)
 
     @api.model
     def barcode(self, barcode_type, value, width, height):
@@ -101,6 +102,6 @@ class LabelPrintWizard(models.TransientModel):
                 barcode_type, value=value, format='png', width=width,
                 height=height,
             )
-            return base64.encodebytes(barcode.asString('png'))
+            return base64.b64encode(barcode.asString('png')).decode("utf-8")
         except (ValueError, AttributeError):
             raise ValueError("Cannot convert into barcode.")

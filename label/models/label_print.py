@@ -9,7 +9,6 @@
 ##############################################################################
 
 from odoo import models, fields, api, _
-from odoo.tools import safe_eval
 
 
 class LabelPrint(models.Model):
@@ -63,7 +62,7 @@ class LabelPrint(models.Model):
                 'context': f"{{'label_print' : {data.id}}}",
                 'view_mode': 'form,tree',
                 'target': 'new',
-                'binding_model_id': self.env.ref("base.model_res_partner").id,
+                'binding_model_id': data.model_id.id,
                 'binding_type': 'report'
             })
 

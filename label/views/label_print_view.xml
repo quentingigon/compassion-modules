@@ -7,7 +7,9 @@
             <form string="Label">
                 <field name="is_barcode" invisible="1"/>
                 <group>
+                     <label for="name"/>
                     <field name="name"/>
+                     <label for="model_id"/>
                     <field name="model_id"/>
                     <group>
                         <field name="padding_top"/>
@@ -28,9 +30,11 @@
                             <field name="field_ids" colspan="4" nolabel="1">
                                 <form string="Fields">
                                     <group colspan="4" col="6">
+                                        <label for="type"/>
                                         <field name="type"/>
+                                        <label for="fontsize"/>
                                         <field name="fontsize"/>
-                                        <group colspan="4" col="6">
+                                        <group colspan="6" col="3">
                                             <field name="python_expression"/>
                                             <field name="field_id" attrs="{'invisible': [('python_expression','=',True)], 'required': [('python_expression','=',False)]}" domain="[('ttype', 'not in', ['one2many', 'refenrence', 'function'])]"/>
                                             <field name="python_field" attrs="{'invisible': [('python_expression','=',False)], 'required': [('python_expression','=',True)]}"/>
