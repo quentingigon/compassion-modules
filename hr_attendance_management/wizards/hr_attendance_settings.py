@@ -72,7 +72,8 @@ class HrAttendanceSettings(models.TransientModel):
         res.update(
             free_break=self.get_free_break(),
             max_extra_hours=self.get_max_extra_hours(),
-            beginning_date_for_balance_computation=self.get_beginning_date_for_balance_computation(),
+            beginning_date_for_balance_computation=self
+            .get_beginning_date_for_balance_computation(),
         )
         return res
 

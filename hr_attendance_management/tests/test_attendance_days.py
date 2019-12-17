@@ -319,7 +319,8 @@ class TestAttendanceDays(SavepointCase):
                 # Morning attendance 8-12
                 divmod_in = divmod(start * 60, 60)
                 att_01 = self.env['hr.attendance'].create({
-                    'check_in': att_day.date + f' {divmod_in[0]:02.0f}:{divmod_in[1]:02.0f}:00',
+                    'check_in': att_day.date +
+                    f' {divmod_in[0]:02.0f}:{divmod_in[1]:02.0f}:00',
                     'check_out': att_day.date + ' 12:00:00',
                     'employee_id': self.michael.id,
                 })
@@ -328,8 +329,10 @@ class TestAttendanceDays(SavepointCase):
                 divmod_in = divmod((12 + lunch_break) * 60, 60)
                 divmod_out = divmod(stop * 60, 60)
                 att_02 = self.env['hr.attendance'].create({
-                    'check_in': att_day.date + f' {divmod_in[0]:02.0f}:{divmod_in[1]:02.0f}:00',
-                    'check_out': att_day.date + f' {divmod_out[0]:02.0f}:{divmod_out[1]:02.0f}:00',
+                    'check_in': att_day.date +
+                    f' {divmod_in[0]:02.0f}:{divmod_in[1]:02.0f}:00',
+                    'check_out': att_day.date +
+                    f' {divmod_out[0]:02.0f}:{divmod_out[1]:02.0f}:00',
                     'employee_id': self.michael.id,
                 })
                 attendances = att_01 + att_02
