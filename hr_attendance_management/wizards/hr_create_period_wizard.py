@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import datetime
 
 from odoo import models, fields
@@ -7,6 +5,7 @@ from odoo import models, fields
 
 class ChangeDayDWizard(models.TransientModel):
     _name = 'hr.create.period.wizard'
+    _description = "Wizard used for creating periods"
 
     employee_id = fields.Many2one('hr.employee', string="ID of concerned employee",
                                   compute="_compute_employee_id")

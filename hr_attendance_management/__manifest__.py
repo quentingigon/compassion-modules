@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 #
 #       ______ Releasing children from poverty      _
@@ -38,7 +37,7 @@
         'hr_public_holidays',
         'hr_contract'
     ],
-    'version': '10.0.3.1.0',
+    'version': '11.0.0.0.0',
     'auto_install': False,
     'website': 'https://www.compassion.ch',
     'license': 'AGPL-3',

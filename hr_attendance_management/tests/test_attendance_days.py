@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Copyright (C) 2018 Compassion CH
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -15,7 +13,7 @@ class TestAttendanceDays(SavepointCase):
 
     @classmethod
     def setUpClass(cls):
-        super(TestAttendanceDays, cls).setUpClass()
+        super().setUpClass()
 
         cls.jack = cls.env.ref('hr.employee_fme')
         cls.gilles = cls.env.ref('hr.employee_qdp')
@@ -27,7 +25,7 @@ class TestAttendanceDays(SavepointCase):
         cls.jack.calendar_id = cls.env.ref('resource.timesheet_group1')
         cls.michael.calendar_id = cls.env.ref('resource.timesheet_group1')
 
-        cls.config = cls.env['base.config.settings'].create({
+        cls.config = cls.env['res.config.settings'].create({
             'free_break': 0.25,
             'max_extra_hours': 20})
         cls.config.set_free_break()
@@ -294,7 +292,7 @@ class TestAttendanceDays(SavepointCase):
         date_start = self.last_week[0] - timedelta(weeks=weeks)
         date_stop = self.last_week[0] - timedelta(days=1)
 
-        config = self.env['base.config.settings'].create({})
+        config = self.env['res.config.settings'].create({})
         config.max_extra_hours = 20
         config.set_max_extra_hours()
 
@@ -319,19 +317,19 @@ class TestAttendanceDays(SavepointCase):
                 stop = start + due_hours + lunch_break + extra_hours
 
                 # Morning attendance 8-12
+                divmod_in = divmod(start * 60, 60)
                 att_01 = self.env['hr.attendance'].create({
-                    'check_in': att_day.date + ' {0:02.0f}:{1:02.0f}:00'
-                    .format(*divmod(start * 60, 60)),
+                    'check_in': att_day.date + f' {divmod_in[0]:02.0f}:{divmod_in[1]:02.0f}:00',
                     'check_out': att_day.date + ' 12:00:00',
                     'employee_id': self.michael.id,
                 })
 
                 # Afternoon attendance
+                divmod_in = divmod((12 + lunch_break) * 60, 60)
+                divmod_out = divmod(stop * 60, 60)
                 att_02 = self.env['hr.attendance'].create({
-                    'check_in': att_day.date + ' {0:02.0f}:{1:02.0f}:00'
-                    .format(*divmod((12 + lunch_break) * 60, 60)),
-                    'check_out': att_day.date + ' {0:02.0f}:{1:02.0f}:00'
-                    .format(*divmod(stop * 60, 60)),
+                    'check_in': att_day.date + f' {divmod_in[0]:02.0f}:{divmod_in[1]:02.0f}:00',
+                    'check_out': att_day.date + f' {divmod_out[0]:02.0f}:{divmod_out[1]:02.0f}:00',
                     'employee_id': self.michael.id,
                 })
                 attendances = att_01 + att_02

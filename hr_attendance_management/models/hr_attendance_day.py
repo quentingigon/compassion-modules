@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2018 Compassion CH
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 import logging
@@ -383,7 +382,7 @@ class HrAttendanceDay(models.Model):
     ##########################################################################
     @api.model
     def create(self, vals):
-        rd = super(HrAttendanceDay, self).create(vals)
+        rd = super().create(vals)
 
         att_date = fields.Date.from_string(rd.date)
 
@@ -428,7 +427,7 @@ class HrAttendanceDay(models.Model):
 
     @api.multi
     def write(self, vals):
-        res = super(HrAttendanceDay, self).write(vals)
+        res = super().write(vals)
         if 'paid_hours' in vals:
             self.recompute_period_if_old_day()
         return res
@@ -499,7 +498,7 @@ class HrAttendanceDay(models.Model):
 
                 elif date == leave_start_date:
                     # convert time in float
-                    start = local_start.hour + local_start.minute / 60.
+                    start = local_start.hour + local_start.minute // 60.
                     for att in self.cal_att_ids:
                         if att.hour_from <= start < att.hour_to:
                             deduction += att.hour_to - start
@@ -508,7 +507,7 @@ class HrAttendanceDay(models.Model):
 
                 elif date == leave_end_date:
                     # convert time in float
-                    end = local_end.hour + local_end.minute / 60.
+                    end = local_end.hour + local_end.minute // 60.
                     for att in self.cal_att_ids:
                         if att.hour_from < end <= att.hour_to:
                             deduction += end - att.hour_from
@@ -535,7 +534,7 @@ class HrAttendanceDay(models.Model):
         for att_day in att_day_ids:
 
             # add the offered break
-            free_break = self.env['base.config.settings'].get_free_break()
+            free_break = self.env['res.config.settings'].get_free_break()
             if free_break > 0:
                 self.env['hr.attendance.break'].create({
                     'employee_id': att_day.employee_id.id,

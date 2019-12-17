@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import datetime
 
 from odoo import models, fields, api
@@ -6,6 +5,7 @@ from odoo import models, fields, api
 
 class ChangeDayDWizard(models.TransientModel):
     _name = 'hr.change.day.wizard'
+    _description = "Wizard used to modify our days of work"
 
     state = fields.Selection([
         ('step1', 'step1'),

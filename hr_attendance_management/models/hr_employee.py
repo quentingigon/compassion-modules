@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Copyright (C) 2018 Compassion CH
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -22,7 +20,7 @@ class HrEmployee(models.Model):
         help="Set this field to true if you want to have the employee "
              "extra hours to be continuously capped to max_extra_hours and not"
              " only at the cron execution time.")
-    current_period_start_date = fields.Date(  # TODO: check to remove!
+    current_period_start_date = fields.Date(
         compute="_compute_current_period_start_date", store=False)
 
     attendance_days_ids = fields.One2many('hr.attendance.day', 'employee_id',
@@ -70,7 +68,7 @@ class HrEmployee(models.Model):
                 employee.current_period_start_date = \
                     fields.Date.from_string(previous_period.end_date)
             else:
-                config = self.env['base.config.settings'].create({})
+                config = self.env['res.config.settings'].create({})
                 employee.current_period_start_date = \
                     config.get_beginning_date_for_balance_computation()
 
@@ -103,7 +101,7 @@ class HrEmployee(models.Model):
         store it if True
         """
         for employee in self:
-            config = self.env['base.config.settings'].create({})
+            config = self.env['res.config.settings'].create({})
             config.set_beginning_date()
             # Compute from 01.01.2018 as default
             balance = employee.initial_balance
@@ -138,7 +136,7 @@ class HrEmployee(models.Model):
             # so we just assign the value. The cap is taken in consideration
             # here.
             elif final_balance:
-                max_extra_hours = self.env['base.config.settings'].create({}) \
+                max_extra_hours = self.env['res.config.settings'].create({}) \
                     .get_max_extra_hours()
                 bal = min(max_extra_hours, final_balance)
                 employee.balance = bal
@@ -223,7 +221,7 @@ class HrEmployee(models.Model):
                      (increasing values as no lost hours can be deduced).
         """
         self.ensure_one()
-        max_extra_hours = self.env['base.config.settings'].create({})\
+        max_extra_hours = self.env['res.config.settings'].create({})\
             .get_max_extra_hours()
         if not start_date:
             start_date = fields.Date.to_string(
@@ -327,13 +325,13 @@ class HrEmployee(models.Model):
 
     @api.multi
     def _compute_time_warning_balance(self):
-        max_extra_hours = self.env['base.config.settings'].create({}) \
+        max_extra_hours = self.env['res.config.settings'].create({}) \
             .get_max_extra_hours()
         for employee in self:
             if employee.balance < 0:
                 employee.time_warning_balance = 'red'
             elif max_extra_hours and \
-                    employee.balance >= max_extra_hours * 2 / 3:
+                    employee.balance >= max_extra_hours * 2 // 3:
                 employee.time_warning_balance = 'orange'
             else:
                 employee.time_warning_balance = 'green'
@@ -370,8 +368,8 @@ class HrEmployee(models.Model):
 
     @api.model
     def convert_hour_to_time(self, hour):
-        formatted = '{:02d}:{:02d}'.format(*divmod(int(abs(
-            float(hour) * 60)), 60))
+        divmod = divmod(int(abs(float(hour) * 60)), 60)
+        formatted = f'{divmod[0]:02d}:{divmod[1]:02d}'
         return '-' + formatted if hour < 0 else formatted
 
     # TODO base it on att_day.total_attendance
@@ -392,7 +390,7 @@ class HrEmployee(models.Model):
             else:
                 delta = datetime.datetime.now() - fields.Datetime.from_string(
                     attendance.check_in)
-                worked_hours += delta.total_seconds() / 3600.0
+                worked_hours += delta.total_seconds() // 3600.0
         return worked_hours
 
     def open_balance_graph(self):

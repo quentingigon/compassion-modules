@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Copyright (C) 2018 Compassion CH
 # Author: Quentin Gigon <gigon.quentin@gmail.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
@@ -61,6 +59,7 @@ class HrEmployeePeriod(models.Model):
       following periods.
       """
     _name = "hr.employee.period"
+    _description = "Period of work of an employee"
 
     _order = "start_date"
 
@@ -150,7 +149,7 @@ class HrEmployeePeriod(models.Model):
 
     @api.multi
     def create(self, vals):
-        res = super(HrEmployeePeriod, self).create(vals)
+        res = super().create(vals)
 
         start_date = vals['start_date']
         end_date = vals['end_date']

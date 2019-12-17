@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Copyright (C) 2018 Compassion CH
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -15,7 +13,7 @@ class TestAnnualBalance(SavepointCase):
 
     @classmethod
     def setUpClass(cls):
-        super(TestAnnualBalance, cls).setUpClass()
+        super().setUpClass()
 
         cls.jack = cls.env.ref('hr.employee_fme')
         cls.gilles = cls.env.ref('hr.employee_qdp')
@@ -27,7 +25,7 @@ class TestAnnualBalance(SavepointCase):
         cls.jack.calendar_id = cls.env.ref('resource.timesheet_group1')
         cls.michael.calendar_id = cls.env.ref('resource.timesheet_group1')
 
-        cls.config = cls.env['base.config.settings'].create({})
+        cls.config = cls.env['res.config.settings'].create({})
 
         # Create attendance days for employees
         attendances = cls.env['hr.attendance'].search([], order='check_in')
@@ -57,7 +55,7 @@ class TestAnnualBalance(SavepointCase):
         stop_01 = date.strftime('%Y-%m-%d 12:00:00')
         # 4h in the morning
         start_02 = date.strftime('%Y-%m-%d 12:30:00')
-        stop_hour_2 = "{}:30".format(16 + hours)
+        stop_hour_2 = f"{16 + hours}:30"
         stop_02 = date.strftime('%Y-%m-%d ' + stop_hour_2)
         # 4h in the afternoon
         self.env['hr.attendance'].create({
@@ -78,13 +76,6 @@ class TestAnnualBalance(SavepointCase):
         self.config.free_break = 0.25
         self.config.set_free_break()
         self.assertEqual(self.config.get_free_break(), 0.25)
-
-        # TODO last balance CRON execution does not exist anymore
-        # def change_date_and_raises(delta):
-        #     self.config.next_balance_cron_execution = \
-        #         fields.Date.from_string(
-        #             self.config.get_last_balance_cron_execution())\
-        #         + timedelta(days=delta)
 
         self.michael.extra_hours_continuous_cap = False
         self.jack.extra_hours_continuous_cap = True

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 # Copyright (C) 2016 Open Net Sarl
 # Copyright (C) 2018 Compassion CH
