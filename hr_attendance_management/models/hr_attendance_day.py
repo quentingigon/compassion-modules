@@ -106,19 +106,10 @@ class HrAttendanceDay(models.Model):
                 # if there is more than one resource.calendar take one...
                 schedule = schedule[0]
             else:
-                # look for a valid contract...
-                # todo: check if att_day.employee_id.current_contract is enough
-                contracts = self.env['hr.contract'].search([
-                    ('employee_id', '=', att_day.employee_id.id),
-                    ('date_start', '<=', att_day.date),
-                    '|', ('date_end', '=', False),
-                    ('date_end', '>=', att_day.date)
-                ], order='date_start desc', limit=1)
-                # ...or take the resource.calendar of employee
-                schedule = contracts.working_hours or (
-                    att_day.employee_id.calendar_id)
+                # take the resource.calendar of employee
+                schedule = att_day.employee_id.calendar_ids[0]
 
-            att_day.working_schedule_id = schedule
+            att_day.working_schedule_id = schedule.calendar_id
 
     def _inverse_working_schedule(self):
         for att_day in self:
@@ -149,8 +140,8 @@ class HrAttendanceDay(models.Model):
             if not att_schedule:
                 att_schedule = current_cal_att.filtered(
                     lambda r:
-                    (r.date_from <= att_day.date and not r.date_to and r.date_from) or
-                    (r.date_to >= att_day.date and not r.date_from and r.date_to))
+                    (r.date_from and r.date_from <= att_day.date and not r.date_to) or
+                    (r.date_to and r.date_to >= att_day.date and not r.date_from))
 
             # Default schedule
             if not att_schedule:

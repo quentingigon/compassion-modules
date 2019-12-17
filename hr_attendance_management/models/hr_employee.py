@@ -102,7 +102,7 @@ class HrEmployee(models.Model):
         """
         for employee in self:
             config = self.env['res.config.settings'].create({})
-            config.set_beginning_date()
+            # config.set_beginning_date()
             # Compute from 01.01.2018 as default
             balance = employee.initial_balance
             start_date = config.get_beginning_date_for_balance_computation()
@@ -231,9 +231,9 @@ class HrEmployee(models.Model):
                 fields.Date.to_string(
                     fields.Date.today() + datetime.timedelta(days=1))
 
-        if not isinstance(start_date, basestring):
+        if not isinstance(start_date, str):
             start_date = fields.Date.to_string(start_date)
-        if not isinstance(end_date, basestring):
+        if not isinstance(end_date, str):
             end_date = fields.Date.to_string(end_date)
 
         if start_date > end_date:

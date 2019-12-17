@@ -43,8 +43,7 @@
         <field name="model">hr.attendance.rules</field>
         <field name="arch"
                type="xml">
-            <tree editable="True"
-                  default_order="time_from">
+            <tree default_order="time_from">
                 <field name="time_from" widget="float_time"/>
                 <field name="time_to" widget="float_time"/>
                 <field name="due_break_total" widget="float_time"/>
