@@ -34,8 +34,11 @@
               "Odoo Community Association (OCA)",
     'depends': [
         'hr_attendance',
-        'hr_public_holidays',
-        'hr_contract'
+        'hr_holidays_public',
+        'hr_contract',
+        'hr_employee_calendar_planning',
+        'child_compassion',
+        'partner_contact_gender'
     ],
     'version': '11.0.0.0.0',
     'auto_install': False,
@@ -66,7 +69,6 @@
     ],
     'demo': [
         'demo/hr_config.xml',
-        'demo/resource_calendar.xml',
         'demo/hr_attendance_day.xml',
         'demo/hr_contract.xml',
     ],

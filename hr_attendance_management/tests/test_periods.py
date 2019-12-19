@@ -70,19 +70,21 @@ class TestPeriod(SavepointCase):
         start_01 = date.replace(hour=8, minute=0, second=0)
         stop_01 = date.replace(hour=12, minute=0, second=0)
         # 4h in the morning
-        start_02 = date.replace(hour=12, minute=30, second=0)
-        stop_02 = date.replace(hour=16+hours, minute=30, second=0)
+        start_02 = date.replace(hour=13, minute=00, second=0)
+        stop_02 = date.replace(hour=17+hours, minute=00, second=0)
         # 4h + hours in the afternoon
 
         self.env['hr.attendance'].create({
             'check_in': start_01,
             'check_out': stop_01,
             'employee_id': employee_id,
+            'due_hours': 4.0,
         })
         self.env['hr.attendance'].create({
             'check_in': start_02,
             'check_out': stop_02,
             'employee_id': employee_id,
+            'due_hours': 4.0,
         })
 
     def add_hours_to_last_attendance_day(self, hours, employee_id):
@@ -124,8 +126,8 @@ class TestPeriod(SavepointCase):
 
         self.add_hours_to_last_attendance_day(1, self.gilles.id)
         self.gilles._compute_balance()
-        self.assertEquals(self.gilles.balance, 3.5)
-        self.assertEquals(self.gilles.period_ids[0].final_balance, 3.5)
+        self.assertEquals(self.gilles.balance, 4)
+        self.assertEquals(self.gilles.period_ids[0].final_balance, 4)
 
     def test_period_balances(self):
         self.gilles.period_ids.unlink()

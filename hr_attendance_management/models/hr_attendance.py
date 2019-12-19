@@ -90,7 +90,7 @@ class HrAttendance(models.Model):
             att_day_updated = self
 
         res = super().write(vals)
-        att_day_updated._find_related_day()
+        att_day_updated._find_related_day()._compute_paid_hours()
         return res
 
     def _find_related_day(self):
@@ -112,8 +112,5 @@ class HrAttendance(models.Model):
                     'employee_id': employee_id,
                     'date': fields.Date.to_string(date)
                 })
-            else:
-                # A modified attendance should update related breaks
-                attendance_day.compute_breaks()
             attendance_days |= attendance_day
         return attendance_days

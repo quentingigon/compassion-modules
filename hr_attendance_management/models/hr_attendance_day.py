@@ -107,9 +107,8 @@ class HrAttendanceDay(models.Model):
                 schedule = schedule[0]
             else:
                 # take the resource.calendar of employee
-                schedule = att_day.employee_id.calendar_ids[0]
-
-            att_day.working_schedule_id = schedule.calendar_id
+                schedule = att_day.employee_id.calendar_ids[0].calendar_id
+            att_day.working_schedule_id = schedule.id
 
     def _inverse_working_schedule(self):
         for att_day in self:
@@ -536,10 +535,10 @@ class HrAttendanceDay(models.Model):
 
             att_ids = att_day.attendance_ids
             iter_att = iter(att_ids.sorted(key=lambda r: r.check_in))
-            previous_att = iter_att.next()
+            previous_att = next(iter_att)
             while True:
                 try:
-                    attendance = iter_att.next()
+                    attendance = next(iter_att)
                     self.env['hr.attendance.break'].create(
                         {
                             'employee_id': att_day.employee_id.id,

@@ -7,7 +7,7 @@
             <field name="interval_type">months</field>
             <field name="interval_number">12</field>
             <field name="numbercall">-1</field>
-            <field name="model">hr.employee</field>
+            <field name="model_id" ref="model_hr_employee"/>
             <field name="function">_cron_compute_annual_balance</field>
             <field name="nextcall" eval="datetime.now().strftime('%Y-%m-%d')"/>
         </record>
