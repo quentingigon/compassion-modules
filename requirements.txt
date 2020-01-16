@@ -4,7 +4,6 @@ pytz
 timezonefinder
 Babel
 phonenumbers
-PyPDF2
 wand
 geojson
 Shapely
@@ -15,3 +14,11 @@ odoo-sphinx-autodoc
 regex
 bs4
 firebase_admin
+detectlanguage
+python-magic
+pyzbar
+matplotlib
+openupgradelib
+pdfminer
+opencv-python
+opencv-contrib-python
