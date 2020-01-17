@@ -44,7 +44,8 @@ class HrEmployee(models.Model):
     today_hour_formatted = fields.Char(compute='_compute_today_hour_formatted')
 
     work_location_id = fields.Many2one('hr.attendance.location',
-                                       string='Work Location')
+                                       string='Work Location',
+                                       compute="_compute_work_location")
 
     work_location = fields.Char(compute='_compute_work_location')
 
@@ -79,6 +80,10 @@ class HrEmployee(models.Model):
                 ('employee_id', '=', employee.id),
                 ('check_out', '=', False)], limit=1)
             employee.work_location = actual_location.location_id.name
+            if employee.work_location:
+                employee.work_location_id = actual_location.location_id
+            else:
+                employee.work_location_id = self.env['hr.attendance.location'].search([])[0]
 
     @api.multi
     @api.depends('initial_balance', 'attendance_days_ids.paid_hours')
@@ -368,9 +373,9 @@ class HrEmployee(models.Model):
 
     @api.model
     def convert_hour_to_time(self, hour):
-        divmod = divmod(int(abs(float(hour) * 60)), 60)
-        formatted = f'{divmod[0]:02d}:{divmod[1]:02d}'
-        return '-' + formatted if hour < 0 else formatted
+        div_mod = divmod(int(abs(float(hour) * 60)), 60)
+        formatted = f'{div_mod[0]:02d}:{div_mod[1]:02d}'
+        return '-' + formatted if float(hour) < 0 else formatted
 
     # TODO base it on att_day.total_attendance
     @api.multi
@@ -410,3 +415,16 @@ class HrEmployee(models.Model):
             'domain': [('employee_id', '=', self.id)],
             'target': 'current',
         }
+
+    @api.model
+    def get_current_employee(self):
+        return self.env['hr.employee'].search([
+            ('user_id.id', '=', self.env.uid)
+        ]).read(['attendance_state',
+                 'name',
+                 'balance_formatted',
+                 'today_hour_formatted',
+                 'time_warning_balance',
+                 'time_warning_today',
+                 'extra_hours_today',
+                 'work_location_id'])
