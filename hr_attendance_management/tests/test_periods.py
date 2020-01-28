@@ -221,7 +221,7 @@ class TestPeriod(SavepointCase):
 
         self.gilles.initial_balance = 1
         self.assertEquals(new_period_4.final_balance, 4)
-        self.assertEquals(self.gilles.balance, 4)
+        self.assertEquals(self.gilles.balance, 5)
 
     # Add a period "inside" another one.
     # 1 more periods should be created (after) and 1 should be modified

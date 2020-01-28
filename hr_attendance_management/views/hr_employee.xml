@@ -10,7 +10,7 @@
                ref="hr.hr_kanban_view_employees"/>
         <field name="arch"
                type="xml">
-            <xpath expr="//div[@class='oe_kanban_details']/ul/li" position="after">
+            <xpath expr="//div[hasclass('oe_kanban_details')]/ul/li" position="after">
                 <li>
                     <field name="balance" widget="float_time"/>
                 </li>
