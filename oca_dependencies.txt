@@ -25,6 +25,7 @@ server-ux
 crm
 geospatial
 # hr
+hr_holidays_public
 partner-contact
 queue
 report-print-send
