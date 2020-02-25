@@ -80,11 +80,11 @@ class HrEmployee(models.Model):
                 ('employee_id', '=', employee.id),
                 ('check_out', '=', False)], limit=1)
             employee.work_location = actual_location.location_id.name
+            hr_location_obj = self.env['hr.attendance.location']
             if employee.work_location:
                 employee.work_location_id = actual_location.location_id
-            else:
-                employee.work_location_id = \
-                    self.env['hr.attendance.location'].search([])[0]
+            elif len(hr_location_obj.search([])) > 0:
+                employee.work_location_id = hr_location_obj.search([])[0]
 
     @api.multi
     @api.depends('initial_balance', 'attendance_days_ids.paid_hours')

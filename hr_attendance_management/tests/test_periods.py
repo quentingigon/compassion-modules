@@ -40,8 +40,7 @@ class TestPeriod(SavepointCase):
             'previous_period': None,
             'lost': 0,
             'employee_id': cls.jack.id,
-            'continuous_cap': True,
-            'origin': "create"
+            'continuous_cap': True
         })
 
         cls.period2 = cls.env['hr.employee.period'].create({
@@ -51,8 +50,7 @@ class TestPeriod(SavepointCase):
             'previous_period': cls.period1.id,
             'lost': 0,
             'employee_id': cls.jack.id,
-            'continuous_cap': True,
-            'origin': "create"
+            'continuous_cap': True
         })
 
         cls.period3 = cls.env['hr.employee.period'].create({
@@ -62,8 +60,7 @@ class TestPeriod(SavepointCase):
             'previous_period': cls.period2.id,
             'lost': 0,
             'employee_id': cls.jack.id,
-            'continuous_cap': True,
-            'origin': "create"
+            'continuous_cap': True
         })
 
     def create_att_day_for_date_with_supp_hours(self, date, employee_id, hours=0):
@@ -377,7 +374,9 @@ class TestPeriod(SavepointCase):
         all_periods = self.env['hr.employee.period'].search([
             ('employee_id', '=', self.jack.id)
         ])
-        self.assertEquals(initial_periods_count + 1,
+        # The period with dates: 2018-12-31 - 2019-02-01
+        # is surrounded by the new one so it will be deleted
+        self.assertEquals(initial_periods_count,
                           self.get_periods_count(self.jack.id))
 
         new_previous_period = self.get_previous_period(start_date, self.jack.id)
