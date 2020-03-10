@@ -10,19 +10,21 @@ odoo.define('refresher.pager', function(require) {
             var res = self._super();
             var el = self.$el;
 
-            var pager_value = el.find('.o_pager_value');
+            var pager_value = el.find('.o_pager_counter');
             pager_value.before('<span class="fa fa-refresh btn btn-icon"></span>');
             var refresh_btn = pager_value.prev();
             refresh_btn.css('marginRight', '8px');
 
             refresh_btn.click(function() {
-                self._change_selection(0);
+                self._changeSelection(0);
             });
 
             return res;
         },
 
-        _change_selection: function(direction) {
+        _changeSelection: function(direction) {
+            if(!direction)
+                direction = 0
             this._super(direction);
         }
     });

@@ -35,6 +35,6 @@
     "website": "http://www.compassion.ch",
     "data": ["templates/assets.xml"],
     "depends": ["web"],
-    "installable": False,
+    "installable": True,
     "auto_install": False,
 }
