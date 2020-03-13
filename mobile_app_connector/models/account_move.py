@@ -2,18 +2,18 @@
 ##############################################################################
 #
 #    Copyright (C) 2019 Compassion CH (http://www.compassion.ch)
-#    Releasing children from poverty in Jesus' name
 #    @author: Emanuel Cino <ecino@compassion.ch>
 #
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from openupgradelib import openupgrade
+from odoo import models, fields
 
 
-def migrate(cr, version):
-    if not version:
-        return
+class AccountMove(models.Model):
+    _inherit = 'account.move'
 
-    # Rename table gmc_message_pool
-    openupgrade.rename_models(cr, [('gmc.message.pool', 'gmc.message')])
+    mobile_notification_id = fields.Many2one(
+        'firebase.notification', 'Mobile notification',
+        help='Mobile notification sent for a donation confirmation'
+    )

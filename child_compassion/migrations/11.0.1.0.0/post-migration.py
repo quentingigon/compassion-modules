@@ -8,8 +8,7 @@
 ##############################################################################
 from openupgradelib import openupgrade
 
-from odoo.addons.message_center_compassion.tools.load_mappings import \
-    load_mapping_files
+from odoo.addons.child_compassion import load_mappings
 
 
 @openupgrade.migrate(use_env=True)
@@ -17,29 +16,16 @@ def migrate(env, version):
     if not version:
         return
 
-    path = 'child_compassion/static/mappings/'
-    files = [
-        'household_member.json',
-        'household.json',
-        'child.json',
-        'child_cdpr.json',
-        'child_lifecycle.json',
-        'child_note.json',
-        'childpool_advanced_search.json',
-        'childpool_rich_mix.json',
-        'childpool_simple_search.json',
-        'childpool_search_response.json',
-        'childpool_search_fields.json',
-        'demand_planning.json',
-        'disaster_alert.json',
-        'fcp.json',
-        'fcp_lifecycle.json',
-        'field_office.json',
-        'global_child.json',
-        'hold_create.json',
-        'hold_release.json',
-        'reservation_cancel.json',
-        'reservation_child.json',
-        'reservation_project.json',
-    ]
-    load_mapping_files(env.cr, path, files)
+    load_mappings(env.cr, env)
+
+    # Force reloading security groups
+    openupgrade.load_xml(env.cr, 'child_compassion', 'security/sponsorship_groups.xml')
+
+    # Add admin groups
+    sponsorship_manager_group = env.ref('child_compassion.group_manager')
+    env['res.users'].search([
+        ('login', 'in', ['ecino', 'dwulliamoz', 'seicher', 'admin',
+                         'sherrendorff']),
+    ]).write({
+        'groups_id': [(4, sponsorship_manager_group.id)]
+    })

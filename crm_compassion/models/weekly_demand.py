@@ -29,11 +29,11 @@ class WeeklyDemand(models.Model):
     # Demand fields
     number_children_website = fields.Integer(
         'Web demand',
-        default=lambda self: self.env['demand.planning.settings'].get_param(
+        default=lambda self: self.env['res.config.settings'].sudo().get_param(
             'number_children_website'))
     number_children_ambassador = fields.Integer(
         'Ambassadors demand',
-        default=lambda self: self.env['demand.planning.settings'].get_param(
+        default=lambda self: self.env['res.config.settings'].sudo().get_param(
             'number_children_ambassador'))
     number_sub_sponsorship = fields.Float(
         'SUB demand',
@@ -148,7 +148,7 @@ class WeeklyDemand(models.Model):
             ('medium_id', '=', website_medium),
             ('start_date', '>=', fields.Date.to_string(start_date))
         ])
-        allocate_per_week = self.env['demand.planning.settings'].get_param(
+        allocate_per_week = self.env['res.config.settings'].sudo().get_param(
             'number_children_website')
         return allocate_per_week - (float(web_sponsored) / STATS_DURATION)
 
@@ -166,7 +166,7 @@ class WeeklyDemand(models.Model):
             ('start_date', '>=', fields.Date.to_string(start_date)),
             ('medium_id', '!=', website_medium)
         ])
-        allocate_per_week = self.env['demand.planning.settings'].get_param(
+        allocate_per_week = self.env['res.config.settings'].sudo().get_param(
             'number_children_ambassador')
         return allocate_per_week - (float(ambass_sponsored) / STATS_DURATION)
 
@@ -176,10 +176,10 @@ class WeeklyDemand(models.Model):
         """ Compute SUB resupply. """
         sub_average = self._default_demand_sub()
         today = datetime.today()
+        start_date = today - timedelta(weeks=STATS_DURATION)
         rejected_sub = self.env['recurring.contract'].search([
             ('parent_id', '!=', False),
-            ('start_date', '>=',
-             datetime.today() - timedelta(weeks=STATS_DURATION)),
+            ('start_date', '>=', fields.Datetime.to_string(start_date)),
             ('end_date', '!=', None),
             ('medium_id.name', '!=', 'internet')
         ]).filtered(
@@ -193,11 +193,12 @@ class WeeklyDemand(models.Model):
             start_date = fields.Datetime.from_string(
                 week.week_start_date) - timedelta(days=SUB_DURATION)
             if start_date <= today:
+                limit_date = fields.Date.from_string(
+                    week.week_end_date) - timedelta(days=SUB_DURATION)
                 sub = self.env['recurring.contract'].search_count([
                     ('parent_id', '!=', False),
                     ('start_date', '>=', start_date),
-                    ('start_date', '<=', fields.Date.from_string(
-                        week.week_end_date) - timedelta(days=SUB_DURATION)),
+                    ('start_date', '<=', fields.Datetime.from_string(limit_date)),
                     ('medium_id.name', '!=', 'internet')
                 ])
                 week.resupply_sub = sub * (
@@ -263,9 +264,9 @@ class WeeklyDemand(models.Model):
 
     def get_defaults(self):
         """ Returns the computation defaults in a dictionary. """
-        web = self.env['demand.planning.settings'].get_param(
+        web = self.env['res.config.settings'].sudo().get_param(
             'number_children_website')
-        ambassador = self.env['demand.planning.settings'].get_param(
+        ambassador = self.env['res.config.settings'].sudo().get_param(
             'number_children_ambassador')
         return {
             'number_children_website': web,

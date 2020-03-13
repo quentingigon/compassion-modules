@@ -70,7 +70,6 @@
         'data/gmc_action.xml',
         'data/end_reasons.xml',
         'data/partner_category_data.xml',
-        'data/friday_invoicer_cron.xml',
         'data/utm_data.xml',
         'data/res_partner_sequence.xml',
         'security/ir.model.access.csv',
@@ -79,7 +78,6 @@
     ],
     'demo': [
         'demo/demo_data.yml',
-        'data/demo_data.xml'
     ],
     'installable': True,
     'auto_install': False,

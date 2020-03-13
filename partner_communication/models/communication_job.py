@@ -7,7 +7,7 @@
 #    The licence is in the file __manifest__.py
 #
 ##############################################################################
-from io import StringIO, BytesIO
+from io import BytesIO
 import logging
 import threading
 from html.parser import HTMLParser
@@ -284,28 +284,25 @@ class CommunicationJob(models.Model):
                              'omr_single_sided',
                              ])
 
-        config = self.config_id.browse(vals['config_id'])
+        partner = self.env['res.partner'].browse(vals.get('partner_id'))
+        lang_of_partner = self.env['res.lang'].search([
+            ('code', 'like', partner.lang or self.env.lang)
+        ])
+        config = self.config_id.browse(vals['config_id']).with_context(
+            lang=lang_of_partner.code)
 
         # Determine user by default : take in config or employee
-        omr_config = config.omr_config_ids
+        omr_config = config.get_config_for_lang(lang_of_partner)[:1]
         if not vals.get('user_id'):
-            partner = self.env['res.partner'].browse(vals.get('partner_id'))
-            if partner:
-                lang_of_partner = self.env['res.lang'].search([
-                    ('code', 'like', partner.lang)
-                ])
-                omr_config = config.get_config_for_lang(lang_of_partner)[0:]
-                # responsible for the communication is user specified in the omr_config
-                # or user specified in the config itself
-                # or the current user
-                user_id = self.env.uid
-                if omr_config.user_id:
-                    user_id = omr_config.user_id.id
-                elif config.user_id:
-                    user_id = config.user_id.id
-                vals['user_id'] = user_id
-            else:
-                vals['user_id'] = self.env.uid
+            # responsible for the communication is user specified in the omr_config
+            # or user specified in the config itself
+            # or the current user
+            user_id = self.env.uid
+            if omr_config.user_id:
+                user_id = omr_config.user_id.id
+            elif config.user_id:
+                user_id = config.user_id.id
+            vals['user_id'] = user_id
 
         # Check all default_vals fields
         for default_val in default_vals:
@@ -345,6 +342,12 @@ class CommunicationJob(models.Model):
         to_print = todo.filtered(lambda j: j.send_mode == 'physical')
         for job in todo.filtered(lambda j: j.send_mode in ('both',
                                                            'digital')):
+            origin = self.env.context.get('origin')
+            # if we print first in a communication with send_mode == both
+            if origin == "both_print" and job.send_mode == 'both':
+                job.send_mode = 'digital'
+                return job._print_report()
+
             state = job._send_mail()
             if job.send_mode != 'both':
                 job.write({
@@ -392,7 +395,7 @@ class CommunicationJob(models.Model):
                     job.email_template_id, [job.id])
                 job.write({
                     'body_html': fields['body_html'],
-                    'subject': fields['subject'],
+                    'subject': fields['subject']
                 })
                 if refresh_uid:
                     job.user_id = self.env.user
@@ -554,7 +557,7 @@ class CommunicationJob(models.Model):
         #   pypdf-how-to-write-a-pdf-to-memory/
         self.ensure_one()
 
-        pdf_buffer = StringIO()
+        pdf_buffer = BytesIO()
         pdf_buffer.write(pdf_data)
 
         existing_pdf = PdfFileReader(pdf_buffer)
@@ -581,7 +584,7 @@ class CommunicationJob(models.Model):
                 page.mergePage(omr_layer)
             output.addPage(page)
 
-        out_buffer = StringIO()
+        out_buffer = BytesIO()
         output.write(out_buffer)
 
         return out_buffer.getvalue()
@@ -670,7 +673,6 @@ class CommunicationJob(models.Model):
                 'auto_delete': False,
                 'reply_to': (self.email_template_id.reply_to or
                              self.user_id.email),
-                'email_from': self.user_id.email
             }
             if self.email_to:
                 # Replace partner e-mail by specified address
@@ -720,9 +722,14 @@ class CommunicationJob(models.Model):
 
             # Print attachments
             job.attachment_ids.print_attachments()
+            origin = self.env.context.get('origin')
+            state = 'done'
+            if job.need_call == 'after_sending':
+                state = 'call'
+            elif origin == 'both_print':
+                state = 'pending'
             job.write({
-                'state': 'call' if job.need_call == 'after_sending'
-                else 'done',
+                'state': state,
                 'sent_date': fields.Datetime.now()
             })
             if not testing:
